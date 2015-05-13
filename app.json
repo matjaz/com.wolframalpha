@@ -1,0 +1,40 @@
+{
+	"id": "smart.alarm",
+	"version": "1.0",
+	"name": {
+		"en": "SmartAlarm",
+		"nl": "SmartAlarm"
+	},
+	"description": {
+		"en": "SmartAlarm",
+		"nl": "SmartAlarm"
+	},
+	"author": {
+		"name": {
+			"en": "Freek Boelders"
+		},
+		"website": "http://www.freekwebdesign.nl"
+	},
+	"dependencies": {
+	},
+	"permissions": [
+		"LOCATION",
+		"SAY"
+	],
+	"interfaces": {
+		"speech": {
+			"triggers": [
+
+			]
+		}
+	},
+	"flow": {
+		"triggers": [
+
+
+		],
+		"conditions": [
+
+		]
+	}
+}

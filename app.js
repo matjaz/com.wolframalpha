@@ -20,6 +20,7 @@ App.prototype.requestWolfram = function( spoken_text ) {
     console.log ("Request Wolfram Alpha")
 
     var found = 0;
+    var interpertation;
     var Client = require('node-wolfram');
     var Wolfram = new Client('8V9EP3-29229H3WUK'); //AppId
     Wolfram.query(spoken_text, function(err, result) {
@@ -28,29 +29,47 @@ App.prototype.requestWolfram = function( spoken_text ) {
             app.speakOutput ("Sorry, Homey ran into an error!");
         } else
         {
+            for(var a=0; a<1; a++) //Read second pod, which is most of the time the result
+            {
+                var pod = result.queryresult.pod[a];
+                  console.log ("get interpertation");
+                  for(var b=0; b<pod.subpod.length; b++) //Read all content step by step (most of the time one)
+                  {
+                      var subpod = pod.subpod[b];
+                      for(var c=0; c<1; c++)
+                      {
+                          interpertation = subpod.plaintext[c];
+                          //console.log(text); //display plaintext content
+                          found = 1;
+                      }
+                  }
+            }
             for(var a=1; a<2; a++) //Read second pod, which is most of the time the result
             {
                 var pod = result.queryresult.pod[a];
                 var title = pod.$.title;
-                //if (title.indexOf('result') >= 0) {
                   console.log ("found result");
                   for(var b=0; b<pod.subpod.length; b++) //Read all content step by step (most of the time one)
                   {
                       var subpod = pod.subpod[b];
                       for(var c=0; c<1; c++)
                       {
-                          var text = subpod.plaintext[c];
-                          //console.log(text); //display plaintext content
-                          app.speakOutput (text);
+                          var result = subpod.plaintext[c];
+                          if (result.indexOf('|') >= 0) {
+                            var sentence = "The general information about " + interpertation + " is the following: " + result + ". Do you want to specify your question?";
+                          } else {
+                            var sentence = interpertation + " is " + result;
+                          }
+                          //console.log(result); //display plaintext content
+                          app.speakOutput (sentence);
                           found = 1;
                       }
                   }
-                //}
             }
 
-            /*if (found == 0) {
+            if (found == 0) {
                 app.speakOutput ("Sorry, Homey coudn't found what you are looking for!");
-            }*/
+            }
         }
 
     });
@@ -109,6 +128,13 @@ App.prototype.speakOutput = function( output ){
     //Homey.manager('speech-output').say( __(output );
 }
 
+App.prototype.askOutput = function( output ){
+    console.log("askWeather");
+    console.log(output);
+
+    //Homey.manager('speech-output').ask( __(output );
+}
+
 var speech = {
    "transcript": "two plus two",
    "language": "en",
@@ -116,7 +142,7 @@ var speech = {
      {
        "id": "text",
        "position": 15,
-       "text": "wheater outside"
+       "text": "eicosapentaenoic acid"
      },
    ],
    "zones": [],

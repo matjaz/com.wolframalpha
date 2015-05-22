@@ -20,16 +20,50 @@ App.prototype.requestWolfram = function( spoken_text ) {
     console.log ("Request Wolfram Alpha")
 
     var found = 0;
+    var sound = spoken_text.format; //Check if the object spoken_text contains the format sound
     var interpertation;
     var Client = require('node-wolfram');
-    var Wolfram = new Client('8V9EP3-29229H3WUK'); //AppId
+    //var variables = {"input": "C major", "format": "sound"}; //Could also instead of spoken_text
+    var Wolfram = new Client("8V9EP3-29229H3WUK"); //AppId
     Wolfram.query(spoken_text, function(err, result) {
         if(err) {
             console.log(err);
             app.speakOutput ("Sorry, Homey ran into an error!");
-        } else
-        {
-            for(var a=0; a<1; a++) //Read second pod, which is most of the time the result
+        }
+        else if (sound == null) { //If not yet checked if it contains sound
+            for(var a=0; a<result.queryresult.pod.length; a++)
+            {
+                var pod = result.queryresult.pod[a];
+                  console.log ("Is it sound?");
+                  for(var b=0; b<pod.subpod.length; b++) //Read all content step by step (most of the time one)
+                  {
+                      console.log(pod.$.scanner);
+                      if (pod.$.scanner == "Music") {
+                        console.log ("Yes it is sound!");
+                        app.requestWolfram ({"input": spoken_text , "format": "sound"});
+                      }
+                  }
+            }
+        }
+        else if (sound == "sound") { //If there is sound, play it!         
+            for(var a=0; a<result.queryresult.pod.length; a++)
+            {
+                var pod = result.queryresult.pod[a];
+                console.log(pod.$.title,": ");
+                for(var b=0; b<pod.sounds.length; b++)
+                {
+                    var sounds = pod.sounds[b];
+                    //console.log(sounds); 
+                    for(var c=0; c<sounds.sound.length; c++)
+                    {
+                        var text = sounds.sound[c].$.url;
+                        console.log('\t', text);
+                    }
+                }
+            }
+        }
+        else { // Else it is just text, read it out!
+            for(var a=0; a<1; a++) //Check how Wolfram interperted the text
             {
                 var pod = result.queryresult.pod[a];
                   console.log ("get interpertation");
@@ -40,7 +74,6 @@ App.prototype.requestWolfram = function( spoken_text ) {
                       {
                           interpertation = subpod.plaintext[c];
                           //console.log(text); //display plaintext content
-                          found = 1;
                       }
                   }
             }
@@ -48,6 +81,7 @@ App.prototype.requestWolfram = function( spoken_text ) {
             {
                 var pod = result.queryresult.pod[a];
                 var title = pod.$.title;
+                console.log (pod.$.title);
                   console.log ("found result");
                   for(var b=0; b<pod.subpod.length; b++) //Read all content step by step (most of the time one)
                   {
@@ -56,7 +90,7 @@ App.prototype.requestWolfram = function( spoken_text ) {
                       {
                           var result = subpod.plaintext[c];
                           if (result.indexOf('|') >= 0) {
-                            var sentence = "The general information about " + interpertation + " is the following: " + result + ". Do you want to specify your question?";
+                            var sentence = "The " + title + " information about " + interpertation + " is the following: " + result + ". Do you want to specify your question?";
                           } else {
                             var sentence = interpertation + " is " + result;
                           }
@@ -112,6 +146,7 @@ App.prototype.events.speech = function() {
     console.log("Speech is triggered");
 
     var spoken_text;
+    var format;
 
     speech.triggers.forEach(function(trigger){
         spoken_text = trigger.text;
@@ -142,7 +177,7 @@ var speech = {
      {
        "id": "text",
        "position": 15,
-       "text": "eicosapentaenoic acid"
+       "text": "C major"
      },
    ],
    "zones": [],

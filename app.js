@@ -16,10 +16,39 @@ App.prototype.init = function(){
     //this.testWolfram();
 };
 
+App.prototype.playmusic = function (url) {
+    console.log("Play Music");
+
+    var http = require('http');
+    var wav = require('wav');
+    var Speaker = require('speaker');
+
+    var makeStream = function(url) { 
+      var stream = require('stream')
+      var rs = new stream.PassThrough()
+      var request = http.get(url, function(res) {
+        res.pipe(rs)
+      })
+      return rs
+    }
+
+    var file = makeStream(url);
+    var wav = require('wav');
+    var reader = new wav.Reader();
+
+    reader.on('format', function (format) {
+      reader.pipe(new Speaker(format)); //Play the WAV file
+    });
+
+    file.pipe(reader); //Pipe the WAV file to the Reader
+
+}
+
 App.prototype.requestWolfram = function( spoken_text ) {
     console.log ("Request Wolfram Alpha")
 
     var found = 0;
+    var foundMusic = 0;
     var sound = spoken_text.format; //Check if the object spoken_text contains the format sound
     var interpertation;
     var Client = require('node-wolfram');
@@ -38,15 +67,18 @@ App.prototype.requestWolfram = function( spoken_text ) {
                   for(var b=0; b<pod.subpod.length; b++) //Read all content step by step (most of the time one)
                   {
                       console.log(pod.$.scanner);
-                      if (pod.$.scanner == "Music") {
+                      if (pod.$.scanner == "Music" || pod.$.scanner == "PlaySound") {
                         console.log ("Yes it is sound!");
-                        app.requestWolfram ({"input": spoken_text , "format": "sound"});
+                        foundMusic = 1;
                       }
                   }
             }
+            if (foundMusic == 1) {
+                app.requestWolfram ({"input": spoken_text , "format": "sound"});
+            }
         }
         else if (sound == "sound") { //If there is sound, play it!         
-            for(var a=0; a<result.queryresult.pod.length; a++)
+            for(var a=0; a<1; a++) //Only open the first pod for 1 sound
             {
                 var pod = result.queryresult.pod[a];
                 console.log(pod.$.title,": ");
@@ -56,8 +88,9 @@ App.prototype.requestWolfram = function( spoken_text ) {
                     //console.log(sounds); 
                     for(var c=0; c<sounds.sound.length; c++)
                     {
-                        var text = sounds.sound[c].$.url;
-                        console.log('\t', text);
+                        var url = sounds.sound[c].$.url;
+                        console.log(url);
+                        app.playmusic (url);
                     }
                 }
             }
@@ -171,13 +204,13 @@ App.prototype.askOutput = function( output ){
 }
 
 var speech = {
-   "transcript": "two plus two",
+   "transcript": "testtranscript",
    "language": "en",
    "triggers": [
      {
        "id": "text",
        "position": 15,
-       "text": "C major"
+       "text": "play 440Hz sine wave"
      },
    ],
    "zones": [],

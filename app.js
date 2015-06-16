@@ -10,14 +10,42 @@ module.exports = App;
 var app = new App();
 
 App.prototype.init = function(){
-    console.log ("App started");
+    Homey.log ("App started");
 
-    this.events.speech();
-    //this.testWolfram();
+    Homey.manager('speech-input').on('speech', function(speech) {
+        Homey.log("Speech is triggered");
+
+        var spoken_text;
+        var format;
+
+            // loop all triggers
+            speech.triggers.forEach(function(trigger){
+                spoken_text = speech.transcript;
+
+                Homey.log ("speech.transcript: " + speech.transcript);
+
+                if( trigger.id == 'Wolfram' ) {
+
+                    // speak the weather
+                    Homey.manager('speech-output').say( __("The weather today is amazing!") );
+                    Homey.log ("I am within the trigger!");
+
+                    spoken_text = spoken_text.substr(str.indexOf("Wolfram ") + 1);
+
+                } else if( trigger.id == '' ) {
+                    // ...  
+                }
+                
+            });
+
+        //spoken_text = "Einstein Born";
+        Homey.log ("spoken_text: " + spoken_text);
+        app.requestWolfram (spoken_text);
+    })
 };
 
-App.prototype.playmusic = function (url) {
-    console.log("Play Music");
+App.prototype.playmusic = function (url, callback) {
+    Homey.log("Play Music");
 
     var http = require('http');
     var wav = require('wav');
@@ -42,33 +70,48 @@ App.prototype.playmusic = function (url) {
 
     file.pipe(reader); //Pipe the WAV file to the Reader
 
+    app.speakOutput ("Do you want to hear the sound it again?");
+    var test = "something";
+    //callback(test);
 }
 
 App.prototype.requestWolfram = function( spoken_text ) {
-    console.log ("Request Wolfram Alpha")
+    Homey.log ("Request Wolfram Alpha")
 
     var found = 0;
     var foundMusic = 0;
     var sound = spoken_text.format; //Check if the object spoken_text contains the format sound
     var interpertation;
     var Client = require('node-wolfram');
-    //var variables = {"input": "C major", "format": "sound"}; //Could also instead of spoken_text
     var Wolfram = new Client("8V9EP3-29229H3WUK"); //AppId
     Wolfram.query(spoken_text, function(err, result) {
         if(err) {
-            console.log(err);
+            Homey.log(err);
             app.speakOutput ("Sorry, Homey ran into an error!");
         }
-        else if (sound == null) { //If not yet checked if it contains sound
+        var success = result.queryresult.$.success;
+
+        if (success == "false") {
+              for(var a=0; a<result.queryresult.didyoumeans.length; a++) //Read all pod results step by step
+              {
+                  var didyoumeans = result.queryresult.didyoumeans[a];
+                  for(var b=0; b<didyoumeans.didyoumean.length; b++) //Read all content step by step (most of the time one)
+                  {
+                      var didyoumean = didyoumeans.didyoumean[b];
+                      Homey.log (didyoumean._); //Log what you meant
+                  }
+              }
+            }
+        else if (sound == null && success == "true") { //If not yet checked if it contains sound
             for(var a=0; a<result.queryresult.pod.length; a++)
             {
                 var pod = result.queryresult.pod[a];
-                  console.log ("Is it sound?");
+                  //Homey.log ("Is it sound?");
                   for(var b=0; b<pod.subpod.length; b++) //Read all content step by step (most of the time one)
                   {
-                      console.log(pod.$.scanner);
+                      //Homey.log(pod.$.scanner);
                       if (pod.$.scanner == "Music" || pod.$.scanner == "PlaySound") {
-                        console.log ("Yes it is sound!");
+                        Homey.log ("Yes it is sound!");
                         foundMusic = 1;
                       }
                   }
@@ -76,37 +119,18 @@ App.prototype.requestWolfram = function( spoken_text ) {
             if (foundMusic == 1) {
                 app.requestWolfram ({"input": spoken_text , "format": "sound"});
             }
-        }
-        else if (sound == "sound") { //If there is sound, play it!         
-            for(var a=0; a<1; a++) //Only open the first pod for 1 sound
-            {
-                var pod = result.queryresult.pod[a];
-                console.log(pod.$.title,": ");
-                for(var b=0; b<pod.sounds.length; b++)
-                {
-                    var sounds = pod.sounds[b];
-                    //console.log(sounds); 
-                    for(var c=0; c<sounds.sound.length; c++)
-                    {
-                        var url = sounds.sound[c].$.url;
-                        console.log(url);
-                        app.playmusic (url);
-                    }
-                }
-            }
-        }
-        else { // Else it is just text, read it out!
+            else { // Else it is just text, read it out!
             for(var a=0; a<1; a++) //Check how Wolfram interperted the text
             {
                 var pod = result.queryresult.pod[a];
-                  console.log ("get interpertation");
+                  Homey.log ("get interpertation");
                   for(var b=0; b<pod.subpod.length; b++) //Read all content step by step (most of the time one)
                   {
                       var subpod = pod.subpod[b];
                       for(var c=0; c<1; c++)
                       {
                           interpertation = subpod.plaintext[c];
-                          //console.log(text); //display plaintext content
+                          //Homey.log(text); //display plaintext content
                       }
                   }
             }
@@ -114,8 +138,8 @@ App.prototype.requestWolfram = function( spoken_text ) {
             {
                 var pod = result.queryresult.pod[a];
                 var title = pod.$.title;
-                console.log (pod.$.title);
-                  console.log ("found result");
+                Homey.log (pod.$.title);
+                  Homey.log ("found result");
                   for(var b=0; b<pod.subpod.length; b++) //Read all content step by step (most of the time one)
                   {
                       var subpod = pod.subpod[b];
@@ -127,7 +151,7 @@ App.prototype.requestWolfram = function( spoken_text ) {
                           } else {
                             var sentence = interpertation + " is " + result;
                           }
-                          //console.log(result); //display plaintext content
+                          //Homey.log(result); //display plaintext content
                           app.speakOutput (sentence);
                           found = 1;
                       }
@@ -137,85 +161,39 @@ App.prototype.requestWolfram = function( spoken_text ) {
             if (found == 0) {
                 app.speakOutput ("Sorry, Homey coudn't found what you are looking for!");
             }
-        }
-
-    });
-};
-
-
-App.prototype.testWolfram = function( callback ) {
-    console.log ("Test Request Wolfram Alpha")
-
-    var Client = require('node-wolfram');
-    var Wolfram = new Client('8V9EP3-29229H3WUK'); //AppId
-    Wolfram.query("tides Boston October 2005", function(err, result) {
-        if(err)
-            console.log(err);
-        else
-        {
-            console.log(text);
-            console.log("I am here!");
-            for(var a=0; a<result.queryresult.pod.length; a++) //Read all pod results step by step
+        
+}        }
+        else if (sound == "sound") { //If there is sound, play it!         
+            for(var a=0; a<1; a++) //Only open the first pod for 1 sound
             {
                 var pod = result.queryresult.pod[a];
-                console.log(pod.$.title,": "); //display title
-                for(var b=0; b<pod.subpod.length; b++) //Read all content step by step (most of the time one)
+                Homey.log(pod.$.title,": ");
+                for(var b=0; b<pod.sounds.length; b++)
                 {
-                    var subpod = pod.subpod[b];
-                    for(var c=0; c<subpod.plaintext.length; c++)
+                    var sounds = pod.sounds[b];
+                    //Homey.log(sounds); 
+                    for(var c=0; c<sounds.sound.length; c++)
                     {
-                        var text = subpod.plaintext[c];
-                        console.log('\t', text); //display plaintext content
+                        var url = sounds.sound[c].$.url;
+                        Homey.log(url);
+                        app.playmusic (url);
                     }
                 }
             }
         }
-
     });
 };
 
-App.prototype.events = {};
-App.prototype.events.speech = function() {
-    console.log("Speech is triggered");
-
-    var spoken_text;
-    var format;
-
-    speech.triggers.forEach(function(trigger){
-        spoken_text = trigger.text;
-    });
-
-    console.log (spoken_text);
-    app.requestWolfram (spoken_text);
-}
-
 App.prototype.speakOutput = function( output ){
-    console.log("speakWeather");
-    console.log(output);
+    Homey.log("speakOutput");
+    Homey.log(output);
 
     //Homey.manager('speech-output').say( __(output );
 }
 
 App.prototype.askOutput = function( output ){
-    console.log("askWeather");
-    console.log(output);
+    Homey.log("askOutput");
+    Homey.log(output);
 
     //Homey.manager('speech-output').ask( __(output );
 }
-
-var speech = {
-   "transcript": "testtranscript",
-   "language": "en",
-   "triggers": [
-     {
-       "id": "text",
-       "position": 15,
-       "text": "play 440Hz sine wave"
-     },
-   ],
-   "zones": [],
-   "time": false,
-   "agent": "homey:app:wolframalpha"
-};
-
-app.init(); //call init function

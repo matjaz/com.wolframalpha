@@ -1,40 +1,71 @@
 {
-	"id": "smart.alarm",
-	"version": "1.0",
-	"name": {
-		"en": "SmartAlarm",
-		"nl": "SmartAlarm"
-	},
-	"description": {
-		"en": "SmartAlarm",
-		"nl": "SmartAlarm"
-	},
-	"author": {
-		"name": {
-			"en": "Freek Boelders"
-		},
-		"website": "http://www.freekwebdesign.nl"
-	},
-	"dependencies": {
-	},
-	"permissions": [
-		"LOCATION",
-		"SAY"
-	],
-	"interfaces": {
-		"speech": {
-			"triggers": [
-
-			]
-		}
-	},
-	"flow": {
-		"triggers": [
-
-
-		],
-		"conditions": [
-
-		]
-	}
+  "id": "com.wolframalpha.knowledge",
+  "version": "1.2.2",
+  "name": {
+    "en": "WolframAlpha",
+    "nl": "WolframAlpha"
+  },
+  "description": {
+    "en": "This is the WolframAlpha app",
+    "nl": "Dit is de WolframAlpha aplicatie"
+  },
+  "author": {
+    "name": "Freek Boelders",
+    "email": "freek@athom.nl",
+    "website": "http://freekboelders.nl/"
+  },
+  "dependencies": {
+    "node-wolfram": "0.0.1",
+    "wav": "1.0.0",
+    "speaker": "0.2.5"
+  },
+  "permissions": [
+    "homey:manager:speech-output",
+    "homey:manager:media",
+    "homey:manager:speech-input"
+  ],
+  "flow": {
+    "triggers": [],
+    "conditions": []
+  },
+  "speech": [
+    {
+      "id": "test",
+      "importance": 1,
+      "synonyms": {
+        "en": [
+          "test"
+        ],
+        "nl": [
+          "test"
+        ]
+      }
+    },
+    {
+      "id": "wolfram",
+      "importance": 1,
+      "synonyms": {
+        "en": [
+          "wolfram"
+        ],
+        "nl": [
+          "wolfram"
+        ]
+      }
+    },
+    {
+      "id": "question",
+      "importance": 0.3,
+      "synonyms": {
+        "en": [
+          "question"
+        ],
+        "nl": [
+          "vraag",
+          "vraagje",
+          "vragen"
+        ]
+      }
+    }
+  ]
 }

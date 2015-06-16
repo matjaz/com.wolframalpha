@@ -23,7 +23,8 @@ App.prototype.init = function(){
 
                 Homey.log ("speech.transcript: " + speech.transcript);
 
-                spoken_text = speech.transcript.replace("wolfram ", ""); //Replace Wolfram (trigger) with nothing 
+                var replace1 = speech.transcript.replace("wolfram", ""); //Replace Wolfram (trigger) with nothing
+                spoken_text = replace1.replace("question", ""); //Replace question (trigger) with nothing 
                 
             });
 
@@ -66,6 +67,12 @@ App.prototype.playmusic = function (url, callback) {
 App.prototype.requestWolfram = function( spoken_text ) {
     Homey.log ("Request Wolfram Alpha")
 
+    var wait = ["Just a sec", "I am looking it up", "Wait a second, Homey is finding your anwser", "I am searching for you"]//Make Homey say that you have to wait for a little while
+    //Homey.manager('speech-output').say( __(wait) );
+    Homey.log (wait);
+
+    //Homey.manager('speech-output').say( __(output );
+
     var found = 0;
     var foundMusic = 0;
     var sound = spoken_text.format; //Check if the object spoken_text contains the format sound
@@ -86,7 +93,8 @@ App.prototype.requestWolfram = function( spoken_text ) {
                   for(var b=0; b<didyoumeans.didyoumean.length; b++) //Read all content step by step (most of the time one)
                   {
                       var didyoumean = didyoumeans.didyoumean[b];
-                      Homey.log (didyoumean._); //Log what you meant
+                      //Homey.log (didyoumean._); //Log what you meant
+                      app.askOutput ("Did you mean: " + didyoumean._ + "?");
                   }
               }
             }

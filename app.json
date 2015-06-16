@@ -30,18 +30,6 @@
   },
   "speech": [
     {
-      "id": "test",
-      "importance": 1,
-      "synonyms": {
-        "en": [
-          "test"
-        ],
-        "nl": [
-          "test"
-        ]
-      }
-    },
-    {
       "id": "wolfram",
       "importance": 1,
       "synonyms": {
@@ -49,21 +37,21 @@
           "wolfram"
         ],
         "nl": [
-          "wolfram"
+          null
         ]
       }
     },
     {
       "id": "question",
-      "importance": 0.3,
+      "importance": 0.5,
       "synonyms": {
         "en": [
           "question"
         ],
         "nl": [
-          "vraag",
-          "vraagje",
-          "vragen"
+          null,
+          null,
+          null
         ]
       }
     }

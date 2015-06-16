@@ -20,25 +20,13 @@ App.prototype.init = function(){
 
             // loop all triggers
             speech.triggers.forEach(function(trigger){
-                spoken_text = speech.transcript;
 
                 Homey.log ("speech.transcript: " + speech.transcript);
 
-                if( trigger.id == 'Wolfram' ) {
-
-                    // speak the weather
-                    Homey.manager('speech-output').say( __("The weather today is amazing!") );
-                    Homey.log ("I am within the trigger!");
-
-                    spoken_text = spoken_text.substr(str.indexOf("Wolfram ") + 1);
-
-                } else if( trigger.id == '' ) {
-                    // ...  
-                }
+                spoken_text = speech.transcript.replace("wolfram ", ""); //Replace Wolfram (trigger) with nothing 
                 
             });
 
-        //spoken_text = "Einstein Born";
         Homey.log ("spoken_text: " + spoken_text);
         app.requestWolfram (spoken_text);
     })

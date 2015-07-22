@@ -10,27 +10,10 @@ module.exports = App;
 var app = new App();
 
 App.prototype.init = function(){
-    Homey.log ("App started");
+    Homey.log ("WolframAlpha app started");
 
-    Homey.manager('speech-input').on('speech', function(speech) {
-        Homey.log("Speech is triggered");
-
-        var spoken_text;
-        var format;
-
-            // loop all triggers
-            speech.triggers.forEach(function(trigger){
-
-                Homey.log ("speech.transcript: " + speech.transcript);
-
-                var replace1 = speech.transcript.replace("wolfram", ""); //Replace Wolfram (trigger) with nothing
-                spoken_text = replace1.replace("question", ""); //Replace question (trigger) with nothing 
-                
-            });
-
-        Homey.log ("spoken_text: " + spoken_text);
-        app.requestWolfram (spoken_text);
-    })
+    //Listen for speech triggers
+    Homey.manager('speech-input').on('speech', onSpeech)
 };
 
 App.prototype.playmusic = function (url, callback) {
@@ -50,7 +33,6 @@ App.prototype.playmusic = function (url, callback) {
     }
 
     var file = makeStream(url);
-    var wav = require('wav');
     var reader = new wav.Reader();
 
     reader.on('format', function (format) {
@@ -60,25 +42,21 @@ App.prototype.playmusic = function (url, callback) {
     file.pipe(reader); //Pipe the WAV file to the Reader
 
     app.speakOutput ("Do you want to hear the sound it again?");
-    var test = "something";
-    //callback(test);
 }
 
 App.prototype.requestWolfram = function( spoken_text ) {
     Homey.log ("Request Wolfram Alpha")
 
-    var wait = ["Just a sec", "I am looking it up", "Wait a second, Homey is finding your anwser", "I am searching for you"]//Make Homey say that you have to wait for a little while
-    //Homey.manager('speech-output').say( __(wait) );
+    var config      = require('./config.json');
+    var wait = ["Just a sec", "I am looking it up", "Wait a second, Homey is finding your anwser", "I am searching for you"] //Make Homey say that you have to wait for a little while
     Homey.log (wait);
-
-    //Homey.manager('speech-output').say( __(output );
 
     var found = 0;
     var foundMusic = 0;
-    var sound = spoken_text.format; //Check if the object spoken_text contains the format sound
+    var sound = spoken_text.format; //Check if the object spoken_text  contains the format sound
     var interpertation;
     var Client = require('node-wolfram');
-    var Wolfram = new Client("8V9EP3-29229H3WUK"); //AppId
+    var Wolfram = new Client(config.appid); //AppId
     Wolfram.query(spoken_text, function(err, result) {
         if(err) {
             Homey.log(err);
@@ -179,6 +157,27 @@ App.prototype.requestWolfram = function( spoken_text ) {
         }
     });
 };
+
+//Listen for speech
+function onSpeech(speech) {
+    Homey.log("Speech is triggered");
+
+    var spoken_text;
+    var format;
+
+       // loop all triggers
+       speech.triggers.forEach(function(trigger){
+
+       Homey.log ("speech.transcript: " + speech.transcript);
+
+       var replace1 = speech.transcript.replace("wolfram", ""); //Replace Wolfram (trigger) with nothing
+           spoken_text = replace1.replace("question", ""); //Replace question (trigger) with nothing 
+                
+       });
+
+    Homey.log ("spoken_text: " + spoken_text);
+    app.requestWolfram (spoken_text);
+}
 
 App.prototype.speakOutput = function( output ){
     Homey.log("speakOutput");

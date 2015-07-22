@@ -1,6 +1,2 @@
 node_modules/
-homey.txt
-speaker.js
-test.mp3
-app-develop.js
-app.js.backup
+config.json

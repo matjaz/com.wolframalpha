@@ -6,8 +6,8 @@
     "nl": "WolframAlpha"
   },
   "description": {
-    "en": "This is the WolframAlpha app",
-    "nl": "Dit is de WolframAlpha aplicatie"
+    "en": "This is the WolframAlpha app for Homey",
+    "nl": "Dit is de WolframAlpha app voor Homey"
   },
   "author": {
     "name": "Freek Boelders",
@@ -15,9 +15,11 @@
     "website": "http://freekboelders.nl/"
   },
   "dependencies": {
-    "node-wolfram": "0.0.1",
-    "wav": "1.0.0",
-    "speaker": "0.2.5"
+    "node-wolfram": "*",
+    "http": "*",
+    "wav": "*",
+    "speaker": "*",
+    "stream": "*"
   },
   "permissions": [
     "homey:manager:speech-output",
@@ -34,24 +36,39 @@
       "importance": 1,
       "synonyms": {
         "en": [
-          "wolfram"
+          "wolfram",
+          "wolfram alpha"
         ],
         "nl": [
-          null
+          "wolfram",
+          "wolfram alpha"
         ]
       }
     },
     {
       "id": "question",
+      "importance": 0.8,
+      "synonyms": {
+        "en": [
+          "question",
+          "i have got a question"
+        ],
+        "nl": [
+          "vraag",
+          "ik heb een vraag",
+          "ik heb een vraagje"
+        ]
+      }
+    },
+        {
+      "id": "what",
       "importance": 0.5,
       "synonyms": {
         "en": [
-          "question"
+          "what"
         ],
         "nl": [
-          null,
-          null,
-          null
+          "wat"
         ]
       }
     }

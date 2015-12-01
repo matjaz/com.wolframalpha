@@ -133,7 +133,7 @@ App.prototype.requestWolfram = function( spoken_text ) {
             }
 
             if (found == 0) {
-                app.speakOutput ("Sorry, Homey coudn't found what you are looking for!");
+                app.speakOutput ("Sorry, Homey couldn't found what you are looking for!");
             }
         
 }        }

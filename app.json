@@ -1,6 +1,6 @@
 {
   "id": "com.wolframalpha.knowledge",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "compatibility": "0.x || 1.x",
   "category": "internet",
   "name": {
@@ -12,9 +12,7 @@
     "nl": "Dit is de WolframAlpha app voor Homey"
   },
   "author": {
-    "name": "Freek Boelders",
-    "email": "freek@athom.nl",
-    "website": "http://freekboelders.nl/"
+    "name": "Athom B.V."
   },
   "images": {
     "large": "./assets/images/large.jpg",

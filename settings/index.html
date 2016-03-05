@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+  <head>
+      <title>Settings</title>
+  </head>
+  <body>
+    <h1>Wolfram|Alpha API</h1>
+    <p>In order for this app to work you need <a href="http://products.wolframalpha.com/developers/" target="_blank">Wolfram|Alpha API app ID</a>.</p>
+    <fieldset>
+      <div class="field row">
+        <label for="appId">App ID</label>
+        <input id="appId" type="text">
+      </div>
+      <div class="field row">
+        <label for="speakWait">Announce searching</label>
+        <input id="speakWait" type="checkbox">
+      </div>
+    </fieldset>
+    <button class="right" onclick="save()">Save changes</button>
+    <script>
+    function onHomeyReady() {
+      Homey.get('appId', function(err, appId) {
+        if (err) {
+          console.error(err)
+        } else {
+          document.getElementById('appId').value = appId
+        }
+        Homey.ready()
+      })
+      Homey.get('speakWait', function(err, speakWait) {
+        if (!err) {
+          document.getElementById('speakWait').checked = speakWait !== false
+        }
+      })
+    }
+    function save() {
+      Homey.set('appId', document.getElementById('appId').value)
+      Homey.set('speakWait', document.getElementById('speakWait').checked)
+    }
+    </script>
+  </body>
+</html>

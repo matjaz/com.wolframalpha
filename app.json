@@ -1,8 +1,10 @@
 {
   "id": "com.wolframalpha.knowledge",
-  "version": "1.2.4",
+  "version": "1.3.0",
   "compatibility": "0.x || 1.x",
-  "category": "internet",
+  "category": [
+    "internet"
+  ],
   "name": {
     "en": "WolframAlpha",
     "nl": "WolframAlpha"
@@ -13,6 +15,15 @@
   },
   "author": {
     "name": "Athom B.V."
+  },
+  "contributors": {
+    "developers": [
+      {
+        "name": "Matjaž Lipuš",
+        "website": "http://matjaz.info",
+        "email": "matjazl@gmail.com"
+      }
+    ]
   },
   "images": {
     "large": "./assets/images/large.jpg",
@@ -25,10 +36,14 @@
     "speaker": "*",
     "stream": "*"
   },
+  "media": [
+    "play",
+    "pause"
+  ],
   "permissions": [
-    "homey:manager:speech-output",
     "homey:manager:media",
-    "homey:manager:speech-input"
+    "homey:manager:speech-input",
+    "homey:manager:speech-output"
   ],
   "flow": {
     "triggers": [],
@@ -37,8 +52,8 @@
   "speech": [
     {
       "id": "wolfram",
-      "importance": 1,
-      "synonyms": {
+      "importance": 0.9,
+      "triggers": {
         "en": [
           "wolfram",
           "wolfram alpha"
@@ -52,10 +67,10 @@
     {
       "id": "question",
       "importance": 0.8,
-      "synonyms": {
+      "triggers": {
         "en": [
           "question",
-          "i have got a question"
+          "i have a question"
         ],
         "nl": [
           "vraag",
@@ -64,10 +79,10 @@
         ]
       }
     },
-        {
+    {
       "id": "what",
       "importance": 0.5,
-      "synonyms": {
+      "triggers": {
         "en": [
           "what"
         ],

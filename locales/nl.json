@@ -1,0 +1,10 @@
+{
+	"searching1": "Een momentje",
+	"searching2": "Ik ben het aan het zoeken",
+	"searching3": "Een moment graag, Homey is het antwoord aan het zoeken",
+	"searching4": "Ik ben opzoek naar het antwoord",
+	"no_app_id": "No WolframAlpha App ID found, please fill in a App ID using the settings of Homey",
+	"no_app_id": "Geen WolframAlpha App ID gevonden, vul een App ID in bij de instellingen van Homey",
+	"did_you_mean": "Bedoelde je __term__?",
+	"could_not_find": "Sorry, Homey kon niet vinden waar je naar zocht!"
+}

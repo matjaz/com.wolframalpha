@@ -9,12 +9,13 @@ exports.init = function () {
 function requestWolfram (query) {
   var appId = Homey.manager('settings').get('appId')
   if (!appId) {
-    Homey.error('Missing appId')
+    Homey.error('Missing appId');
+    speak(__('no_app_id'));
     return
   }
   var format = query.format
   if (!format && Homey.manager('settings').get('speakWait') !== false) {
-    var msg = ['Just a sec', 'I am looking it up', 'Wait a second, Homey is finding your answer', 'I am searching for you']
+    var msg = [__('searching1'), __('searching2'), __('searching3'), __('searching4')]
     speak(msg[Math.floor(Math.random() * msg.length)])
   }
 
@@ -69,7 +70,8 @@ function requestWolfram (query) {
         interpertation = pod.subpod[b].plaintext[0]
         break
       }
-      pod = result.queryresult.pod[1]
+
+      pod = result.queryresult.pod[0]
       for (b = 0; b < pod.subpod.length; b++) {
         var res = pod.subpod[b].plaintext[0]
         if (res.indexOf('|') !== -1) {

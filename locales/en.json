@@ -1,4 +1,9 @@
 {
-  "did_you_mean": "Did you mean __term__?",
-  "could_not_find": "Sorry, Homey couldn\"t find what you are looking for!"
+	"searching": "Just a sec",
+	"searching2": "I am looking it up",
+	"searching3": "Wait a second, Homey is finding your answer",
+	"searching4": "I am searching for you",
+	"no_app_id": "No WolframAlpha App ID found, please fill in a App ID using the settings of Homey",
+	"did_you_mean": "Did you mean __term__?",
+	"could_not_find": "Sorry, Homey couldn't find what you are looking for!"
 }

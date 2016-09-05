@@ -30,7 +30,7 @@ function requestWolfram (query) {
     var pod
     var a
     var b
-    if (success === 'false') {
+    if (success === 'false' && result.queryresult.didyoumeans) {
       for (a = 0; a < result.queryresult.didyoumeans.length; a++) {
         var didyoumeans = result.queryresult.didyoumeans[a]
         for (b = 0; b < didyoumeans.didyoumean.length; b++) {
